@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vVztOPoEsgA=",
+  "dgSpecHash": "PZ+TohgqQeM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\vTrack\\vTrack.csproj",
+  "projectFilePath": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\Vtrack\\vTrack.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\victor.costa\\.nuget\\packages\\microsoft.data.sqlite.core\\10.0.2\\microsoft.data.sqlite.core.10.0.2.nupkg.sha512",
     "C:\\Users\\victor.costa\\.nuget\\packages\\microsoft.entityframeworkcore\\10.0.2\\microsoft.entityframeworkcore.10.0.2.nupkg.sha512",

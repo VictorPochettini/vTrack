@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\vTrack\\vTrack.csproj": {}
+    "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\Vtrack\\vTrack.csproj": {}
   },
   "projects": {
-    "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\vTrack\\vTrack.csproj": {
+    "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\Vtrack\\vTrack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\vTrack\\vTrack.csproj",
+        "projectUniqueName": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\Vtrack\\vTrack.csproj",
         "projectName": "vTrack",
-        "projectPath": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\vTrack\\vTrack.csproj",
+        "projectPath": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\Vtrack\\vTrack.csproj",
         "packagesPath": "C:\\Users\\victor.costa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\vTrack\\obj\\",
+        "outputPath": "C:\\Users\\victor.costa\\Documents\\Códigos\\vTrack\\Vtrack\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
