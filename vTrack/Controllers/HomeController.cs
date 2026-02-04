@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using vTrack.Models.ViewModels;
+using vTrack.Models;
 
 namespace vTrack.Controllers;
 
