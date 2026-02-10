@@ -1,24 +1,28 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
+using vTrack.Models;
 using vTrack.Models.ViewModels;
+using vTrack.Services;
 
 namespace vTrack.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    private PackageService _service;
+
+    public HomeController(PackageService service)
     {
-        return View();
+        _service = service;
     }
 
-    public IActionResult Privacy()
+
+    public async Task<IActionResult> Index()
     {
-        return View();
+        Package package = await _service.GetLatestPackageAsync();
+        IndexViewModel viewModel = new IndexViewModel(package);
+        return View(viewModel);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+
 }

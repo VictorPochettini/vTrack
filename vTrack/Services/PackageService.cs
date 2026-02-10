@@ -3,11 +3,16 @@ using vTrack.Models;
 
 namespace vTrack.Services;
 
-class PackageService : IPackageService
+public class PackageService : IPackageService
 {
-    private readonly PackageParser _parser = new PackageParser();
-    private readonly PackageRepository _repository = new PackageRepository();
+    private readonly PackageParser _parser;
+    private readonly PackageRepository _repository;
 
+    public PackageService(PackageParser parser, PackageRepository repository)
+    {
+        _parser = parser;
+        _repository = repository;
+    }
     public async Task StorePackageAsync(string RawData)
     {
         await _repository.AddAsync(_parser.Parser(RawData));
@@ -15,6 +20,7 @@ class PackageService : IPackageService
 
     public async Task<Package> GetLatestPackageAsync()
     {
+        //I might add logic here later
         return await _repository.GetLastAsync();
     }
 }

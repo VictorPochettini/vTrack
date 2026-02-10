@@ -3,9 +3,14 @@ using vTrack.Models;
 
 namespace vTrack.Data.Repositories;
 
-class PackageRepository : IPackageRepository
+public class PackageRepository : IPackageRepository
 {
     private ApplicationDbContext _db;
+
+    public PackageRepository(ApplicationDbContext db)
+    {
+        _db = db;
+    }
     public async Task<Package> AddAsync(Package package)
     {
         _db.Packages.Add(package);

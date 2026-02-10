@@ -1,6 +1,6 @@
 namespace vTrack.Models;
 
-class Package
+public class Package
 {
     public int ID {get; set;}
     public double Lat {get; set;}

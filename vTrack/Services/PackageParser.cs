@@ -3,7 +3,7 @@ using vTrack.Models;
 
 namespace vTrack.Services;
 
-class PackageParser : IPackageParser
+public class PackageParser : IPackageParser
 {
     public Package Parser(string RawData)
     {

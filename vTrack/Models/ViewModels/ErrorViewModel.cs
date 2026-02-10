@@ -1,6 +1,6 @@
-namespace vTrack.Models;
+namespace vTrack.Models.ViewModels;
 
-public class ErrorViewModel
+class ErrorViewModel
 {
     public string? RequestId { get; set; }
 

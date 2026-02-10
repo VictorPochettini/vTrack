@@ -1,6 +1,10 @@
 namespace vTrack.Models.ViewModels;
 
-class IndexViewModel
+public class IndexViewModel
 {
     public Package ReceivedPackage {get; set;}
+    public IndexViewModel(Package package)
+    {
+        ReceivedPackage = package;
+    }
 }

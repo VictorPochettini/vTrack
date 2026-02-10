@@ -1,8 +1,106 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model vTrack.Models.ViewModels.IndexViewModel
+
+@{
+    ViewData["Title"] = "Rastreamento de Pacote";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2>Rastreamento em Tempo Real</h2>
+    
+    <!-- Informações do Pacote -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Informações do Pacote</h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>ID:</strong> <span id="package-id">@Model.ReceivedPackage.ID</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Latitude:</strong> <span id="package-lat">@Model.ReceivedPackage.Lat</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Longitude:</strong> <span id="package-lon">@Model.ReceivedPackage.Lon</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Última Atualização:</strong> <span id="package-timestamp">@Model.ReceivedPackage.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mapa -->
+    <div id="map" style="height: 500px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+}
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <script>
+        // Inicializa o mapa
+        const map = L.map('map').setView([@Model.ReceivedPackage.Lat, @Model.ReceivedPackage.Lon], 15);
+        
+        // Adiciona o tile layer do OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // Cria o marcador inicial
+        let marker = L.marker([@Model.ReceivedPackage.Lat, @Model.ReceivedPackage.Lon]).addTo(map);
+        marker.bindPopup('<b>Pacote #@Model.ReceivedPackage.ID</b><br>Última posição conhecida').openPopup();
+        
+        // Opcional: adiciona uma polyline para mostrar o trajeto
+        let trackingPath = L.polyline([[@Model.ReceivedPackage.Lat, @Model.ReceivedPackage.Lon]], {
+            color: 'blue',
+            weight: 3,
+            opacity: 0.7
+        }).addTo(map);
+        
+        // Atualiza a cada 30 segundos
+        setInterval(async function() {
+            try {
+                const response = await fetch('/Home/GetLatestPackage');
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar dados');
+                }
+                
+                const package = await response.json();
+                
+                // Atualiza as informações na tela
+                document.getElementById('package-id').textContent = package.id;
+                document.getElementById('package-lat').textContent = package.lat.toFixed(6);
+                document.getElementById('package-lon').textContent = package.lon.toFixed(6);
+                
+                // Formata o timestamp
+                const timestamp = new Date(package.timestamp);
+                document.getElementById('package-timestamp').textContent = 
+                    timestamp.toLocaleDateString('pt-BR') + ' ' + timestamp.toLocaleTimeString('pt-BR');
+                
+                // Atualiza a posição do marcador no mapa
+                const newLatLng = [package.lat, package.lon];
+                marker.setLatLng(newLatLng);
+                marker.setPopupContent(`<b>Pacote #${package.id}</b><br>Atualizado às ${timestamp.toLocaleTimeString('pt-BR')}`);
+                
+                // Adiciona o ponto ao trajeto
+                trackingPath.addLatLng(newLatLng);
+                
+                // Centraliza o mapa na nova posição
+                map.setView(newLatLng, map.getZoom());
+                
+                console.log('Posição atualizada:', package);
+                
+            } catch (error) {
+                console.error('Erro ao buscar pacote:', error);
+            }
+        }, 30000); // 30 segundos
+    </script>
+}
