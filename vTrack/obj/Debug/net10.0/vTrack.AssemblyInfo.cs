@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("vTrack")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ae153e77e4228c77985f9bf5cb5266af2cf334d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9c7093441381274292b25e1c5064b8453c455667")]
 [assembly: System.Reflection.AssemblyProductAttribute("vTrack")]
 [assembly: System.Reflection.AssemblyTitleAttribute("vTrack")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

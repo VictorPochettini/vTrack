@@ -6,21 +6,17 @@ namespace vTrack.Services;
 
 public class PackageReceiverService : BackgroundService
 {
-    TcpListener server;
-    PackageService _packageService;
+    private TcpListener server;
+    Int32 port = 13000;
+    IPAddress ip_address = IPAddress.Parse("127.0.0.1");
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public PackageReceiverService(PackageService packageService)
+    public PackageReceiverService(IServiceScopeFactory scopeFactory)
     {
-        _packageService = packageService;
+        _scopeFactory = scopeFactory;
     }
-    private async Task Listen()
+    private async Task Listen(TcpListener server)
     {
-        Int32 port = 13000;
-        IPAddress ip_address = IPAddress.Parse("127.0.0.1");
-
-        server = new TcpListener(ip_address, port);
-
-        server.Start();
 
         Byte[] bytes = new Byte[2048];
         String data = null;
@@ -39,14 +35,21 @@ public class PackageReceiverService : BackgroundService
 
         data = sb.ToString();
 
-        await _packageService.StorePackageAsync(data);
+        using(var scope = _scopeFactory.CreateScope())
+        {
+            var packageService = scope.ServiceProvider.GetRequiredService<PackageService>();
+            await packageService.StorePackageAsync(data);
+        }
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        server = new TcpListener(ip_address, port);
+        server.Start();
+
         while(!cancellationToken.IsCancellationRequested)
         {
-            await Listen();
+            await Listen(server);
         }
     }
 }

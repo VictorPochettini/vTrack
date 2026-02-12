@@ -20,6 +20,12 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         Package package = await _service.GetLatestPackageAsync();
+
+        if(package == null)
+        {
+            package = new Package(0, 0, 0, DateTime.Now, " ");
+        }
+
         IndexViewModel viewModel = new IndexViewModel(package);
         return View(viewModel);
     }
