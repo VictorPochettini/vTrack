@@ -47,8 +47,8 @@
             crossorigin=""></script>
     
     <script>
-        // Inicializa o mapa
-        const map = L.map('map').setView([@Model.ReceivedPackage.Lat, @Model.ReceivedPackage.Lon], 15);
+        // Inicializa o mapa (usar InvariantCulture para garantir ponto decimal)
+        const map = L.map('map').setView([@Model.ReceivedPackage.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.ReceivedPackage.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture)], 15);
         
         // Adiciona o tile layer do OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -57,11 +57,11 @@
         }).addTo(map);
         
         // Cria o marcador inicial
-        let marker = L.marker([@Model.ReceivedPackage.Lat, @Model.ReceivedPackage.Lon]).addTo(map);
+        let marker = L.marker([@Model.ReceivedPackage.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.ReceivedPackage.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture)]).addTo(map);
         marker.bindPopup('<b>Pacote #@Model.ReceivedPackage.ID</b><br>Última posição conhecida').openPopup();
         
         // Opcional: adiciona uma polyline para mostrar o trajeto
-        let trackingPath = L.polyline([[@Model.ReceivedPackage.Lat, @Model.ReceivedPackage.Lon]], {
+        let trackingPath = L.polyline([[@Model.ReceivedPackage.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.ReceivedPackage.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture)]], {
             color: 'blue',
             weight: 3,
             opacity: 0.7

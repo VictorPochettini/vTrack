@@ -20,7 +20,7 @@ public class PackageRepository : IPackageRepository
 
     public async Task<Package> GetLastAsync()
     {
-        return await _db.Packages.OrderByDescending(p => p.Timestamp).FirstOrDefaultAsync();
+        return await _db.Packages.OrderByDescending(p => p.ID).FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Package>> GetAllAsync()

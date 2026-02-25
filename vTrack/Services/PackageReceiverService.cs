@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace vTrack.Services;
 
@@ -15,31 +17,23 @@ public class PackageReceiverService : BackgroundService
     {
         _scopeFactory = scopeFactory;
     }
-    private async Task Listen(TcpListener server)
+    private static int IndexOfSequence(List<byte> buffer, byte[] seq)
     {
-
-        Byte[] bytes = new Byte[2048];
-        String data = null;
-        StringBuilder sb = new StringBuilder();
-
-        using  TcpClient client = await server.AcceptTcpClientAsync();
-
-        NetworkStream stream = client.GetStream();
-
-        int i;
-
-        while((i =  await stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
+        if (seq.Length == 0) return -1;
+        for (int i = 0; i <= buffer.Count - seq.Length; i++)
         {
-            sb.Append(Convert.ToHexString(bytes[0..i]));
+            bool match = true;
+            for (int j = 0; j < seq.Length; j++)
+            {
+                if (buffer[i + j] != seq[j])
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) return i;
         }
-
-        data = sb.ToString();
-
-        using(var scope = _scopeFactory.CreateScope())
-        {
-            var packageService = scope.ServiceProvider.GetRequiredService<PackageService>();
-            await packageService.StorePackageAsync(data);
-        }
+        return -1;
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -47,9 +41,49 @@ public class PackageReceiverService : BackgroundService
         server = new TcpListener(ip_address, port);
         server.Start();
 
-        while(!cancellationToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            await Listen(server);
+            using TcpClient client = await server.AcceptTcpClientAsync();
+            using NetworkStream stream = client.GetStream();
+
+            var buffer = new List<byte>();
+            byte[] readBuffer = new byte[2048];
+            byte[] terminator = new byte[] { 0x0D, 0x0A };
+
+            try
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    int bytesRead = await stream.ReadAsync(readBuffer, 0, readBuffer.Length, cancellationToken);
+                    if (bytesRead == 0) break;
+
+                    // Append received bytes
+                    for (int i = 0; i < bytesRead; i++) buffer.Add(readBuffer[i]);
+
+                    int termIndex;
+                    while ((termIndex = IndexOfSequence(buffer, terminator)) != -1)
+                    {
+                        int messageLength = termIndex + terminator.Length;
+                        byte[] messageBytes = new byte[messageLength];
+                        buffer.CopyTo(0, messageBytes, 0, messageLength);
+
+                        string messageHex = Convert.ToHexString(messageBytes);
+
+                        using (var scope = _scopeFactory.CreateScope())
+                        {
+                            var packageService = scope.ServiceProvider.GetRequiredService<PackageService>();
+                            await packageService.StorePackageAsync(messageHex);
+                        }
+
+                        buffer.RemoveRange(0, messageLength);
+                    }
+                }
+            }
+            catch (OperationCanceledException) { break; }
+            catch (Exception)
+            {
+                // swallowing exception for now; consider logging
+            }
         }
     }
 }

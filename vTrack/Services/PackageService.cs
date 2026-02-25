@@ -15,7 +15,9 @@ public class PackageService : IPackageService
     }
     public async Task StorePackageAsync(string RawData)
     {
-        await _repository.AddAsync(_parser.Parser(RawData));
+        Package p = _parser.Parser(RawData);
+        Console.WriteLine(p.Timestamp);
+        await _repository.AddAsync(p);
     }
 
     public async Task<Package> GetLatestPackageAsync()
